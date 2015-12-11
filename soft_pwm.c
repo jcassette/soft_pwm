@@ -98,7 +98,7 @@ static ssize_t pwm_store(
     status = -EIO;
   }else{
     unsigned long value;
-    status = strict_strtoul(buf, 0, &value);
+    status = kstrtoul(buf, 0, &value);
     if(status==0){
       if(strcmp(attr->attr.name, "pulse")==0){
         if(value<=desc->period){ desc->pulse = (unsigned int)value; }
@@ -142,7 +142,7 @@ static ssize_t export_store(struct class *class, struct class_attribute *attr, c
   long gpio;
   int  status;
 
-  status = strict_strtol(buf, 0, &gpio);
+  status = kstrtol(buf, 0, &gpio);
   if(status<0){ goto done; }
 
   status = gpio_request(gpio, "soft_pwm");
@@ -171,7 +171,7 @@ static ssize_t unexport_store(struct class *class, struct class_attribute *attr,
   long gpio;
   int  status;
 
-  status = strict_strtol(buf, 0, &gpio);
+  status = kstrtol(buf, 0, &gpio);
   if(status<0){ goto done; }
 
   status = -EINVAL;
@@ -228,7 +228,7 @@ int pwm_export(unsigned gpio){
 }
 
 /* Used by pwm_unexport below to find the device which should be freed */
-static int match_export(struct device *dev, void *data){
+static int match_export(struct device *dev, const void *data){
   return dev_get_drvdata(dev) == data;
 }
 
